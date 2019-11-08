@@ -1,24 +1,30 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 
-import { CryptoMarketService, CryptoConverterService } from '../../services/crypto.service';
+import { ConverterService } from '../../services/crypto/converter.service';
+import { ExchangeService } from '../../services/crypto/exchanges.service';
 import { CurrencyResponse } from '../../dto/crypto.dto';
+import { upbit } from 'ccxt';
 
 @Controller('/v1/crypto')
 export class CryptoController {
+  private readonly exchangeClient = ExchangeService.of(new upbit());
+
   constructor(
-    private readonly marketService: CryptoMarketService,
-    private readonly converterService: CryptoConverterService,
+    private readonly converterService: ConverterService,
   ) {}
 
   @Get('/currencies')
   async getCurrencies() {
-    const markets = await this.marketService.markets();
-    return markets.map((market) => CurrencyResponse.fromCcxtMarket(market));
+    const currencies = await this.exchangeClient.currencies();
+    return currencies.map((currency) => CurrencyResponse.fromCcxtMarket(currency));
   }
 
   @Get('/converted_price')
-  async getConvertedPrice() {
-    await this.marketService.markets();
-    return CryptoConverterService.convertPrice(1, 'CPT', 'USDT');
+  async getConvertedPrice(
+    @Query('price') price: number,
+    @Query('currencyFrom') from: string,
+    @Query('currencyTo') to: string,
+  ) {
+    return await this.converterService.convertPrice(price, from, to);
   }
 }

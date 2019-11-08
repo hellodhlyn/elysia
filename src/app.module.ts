@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 
 import { CryptoController } from './controllers/v1/crypto.controller';
-import { CryptoMarketService, CryptoConverterService } from './services/crypto.service';
+import { ConverterService } from './services/crypto/converter.service';
+import { ExchangeService } from './services/crypto/exchanges.service';
 
 @Module({
   imports: [],
   controllers: [CryptoController],
-  providers: [CryptoConverterService, CryptoMarketService],
+  providers: [ConverterService, ExchangeService],
 })
 export class AppModule {}
