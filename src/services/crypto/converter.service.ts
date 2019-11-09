@@ -11,7 +11,7 @@ export interface ConvertPriceResult {
 @Injectable()
 export class ConverterService {
   private exchange = ExchangeService.of(new upbit());
-  private relations: {[marketId: string]: Set<string>} = {};
+  private relations: { [marketId: string]: Set<string> } = {};
 
   async convertPrice(price: number, from: string, to: string): Promise<ConvertPriceResult> {
     await this.syncMarkets();
@@ -32,12 +32,12 @@ export class ConverterService {
       convertedPrice = (market[0].id === marketId) ? convertedPrice * ticker.last : convertedPrice / ticker.last;
     }
 
-    return {convertedPrice: convertedPrice.toFixed(8), route};
+    return { convertedPrice: convertedPrice.toFixed(8), route };
   }
 
   private async syncMarkets() {
     const markets = await this.exchange.markets();
-    markets.forEach((market) => {
+    markets.forEach(market => {
       const baseUnit = market.baseId;
       const quoteUnit = market.quoteId;
 

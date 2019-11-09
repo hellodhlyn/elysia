@@ -1,17 +1,15 @@
 import { Controller, Get, Query } from '@nestjs/common';
+import { upbit } from 'ccxt';
 
+import { CurrencyResponse } from '../../dto/crypto.dto';
 import { ConverterService } from '../../services/crypto/converter.service';
 import { ExchangeService } from '../../services/crypto/exchanges.service';
-import { CurrencyResponse } from '../../dto/crypto.dto';
-import { upbit } from 'ccxt';
 
 @Controller('/v1/crypto')
 export class CryptoController {
   private readonly exchangeClient = ExchangeService.of(new upbit());
 
-  constructor(
-    private readonly converterService: ConverterService,
-  ) {}
+  constructor(private readonly converterService: ConverterService) {}
 
   @Get('/currencies')
   async getCurrencies() {
