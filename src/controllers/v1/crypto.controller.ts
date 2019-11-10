@@ -1,5 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { upbit } from 'ccxt';
+import Decimal from 'decimal.js';
 
 import { CurrencyResponse } from '../../dto/crypto.dto';
 import { ConverterService } from '../../services/crypto/converter.service';
@@ -19,10 +20,10 @@ export class CryptoController {
 
   @Get('/converted_price')
   async getConvertedPrice(
-    @Query('price') price: number,
+    @Query('price') price: string,
     @Query('currencyFrom') from: string,
     @Query('currencyTo') to: string,
   ) {
-    return await this.converterService.convertPrice(price, from, to);
+    return await this.converterService.convertPrice(new Decimal(price), from, to);
   }
 }

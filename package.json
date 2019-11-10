@@ -24,6 +24,7 @@
     "@nestjs/core": "^6.7.2",
     "@nestjs/platform-express": "^6.7.2",
     "ccxt": "^1.18.1365",
+    "decimal.js": "^10.2.0",
     "node-cache": "^5.0.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",

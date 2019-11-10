@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { upbit } from 'ccxt';
+import Decimal from 'decimal.js';
 
 import { ExchangeService } from './exchanges.service';
 
@@ -13,7 +14,7 @@ export class ConverterService {
   private exchange = ExchangeService.of(new upbit());
   private relations: { [marketId: string]: Set<string> } = {};
 
-  async convertPrice(price: number, from: string, to: string): Promise<ConvertPriceResult> {
+  async convertPrice(price: Decimal, from: string, to: string): Promise<ConvertPriceResult> {
     await this.syncMarkets();
 
     const route = this.findRoute(from, to);
@@ -29,7 +30,8 @@ export class ConverterService {
 
       const market = markets.filter((m) => [marketId, reversedId].includes(m.id));
       const ticker = await this.exchange.ticker(market[0].symbol);
-      convertedPrice = (market[0].id === marketId) ? convertedPrice * ticker.last : convertedPrice / ticker.last;
+      const lastPrice = new Decimal(ticker.last);
+      convertedPrice = (market[0].id === marketId) ? convertedPrice.times(lastPrice) : convertedPrice.dividedBy(lastPrice);
     }
 
     return { convertedPrice: convertedPrice.toFixed(8), route };
